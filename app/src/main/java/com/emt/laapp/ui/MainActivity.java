@@ -21,15 +21,19 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.emt.laapp.R;
+import com.emt.laapp.adapters.ContactoAdapter;
+import com.emt.laapp.adapters.ContactoItemListener;
 import com.emt.laapp.databinding.ActivityMainBinding;
 import com.emt.laapp.viewmodel.MainActivityViewModel;
 import com.emt.laapp.viewmodel.injection.MainActivityFactory;
+
+import java.util.ArrayList;
 
 import io.reactivex.disposables.CompositeDisposable;
 import laapp.emt.com.core.model.Contacto;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity implements LifecycleOwner {
+public class MainActivity extends AppCompatActivity implements LifecycleOwner, ContactoItemListener {
 
     private LifecycleRegistry mLifecycleRegistry;
     private MainActivityViewModel mViewModel;
@@ -37,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner {
     private ActivityMainBinding mBinding;
     private int MyVersion = Build.VERSION.SDK_INT;
     private static final int CONTACTS_PERMISSIONS = 101;
+    private ContactoAdapter adapter;
+    private ArrayList<Contacto> listContactos = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +75,10 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner {
     private void initControls() {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         mBinding.rvContactos.setLayoutManager(layoutManager);
+
+        adapter = new ContactoAdapter(listContactos, this);
+        mBinding.rvContactos.setAdapter(adapter);
+
     }
 
     private void test() {
@@ -160,5 +170,10 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner {
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+    }
+
+    @Override
+    public void Onclick(Contacto contacto) {
+
     }
 }
