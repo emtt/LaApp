@@ -1,0 +1,8 @@
+package laapp.emt.com.core;
+
+public class Constants {
+
+    public static String SERVER = "http://mobilize.mx/";
+    public static final String SEARCH_TELEFONO = "laapp/api/v1/contactos/search";
+    public static final String DATABASE_NAME = "laapp";
+}

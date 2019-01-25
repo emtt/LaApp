@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="contacto"
+            type="laapp.emt.com.core.model.Contacto" />
+
+    </data>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/contact_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@null"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="3dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:padding="@dimen/normalPadding">
+
+            <TextView
+                android:id="@+id/txtInitial"
+                android:layout_width="@dimen/circleSize"
+                android:layout_height="@dimen/circleSize"
+                android:background="@drawable/circle"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="A"
+                android:textColor="@color/white"
+                android:textSize="@dimen/initialSize"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtNombre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/textNormalMargin"
+                android:layout_toEndOf="@id/txtInitial"
+                android:text="@{contacto.nombre}"
+                android:textSize="@dimen/textNormalSize"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtTelefono"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtNombre"
+                android:layout_margin="@dimen/textNormalMargin"
+                android:layout_toEndOf="@id/txtInitial"
+                android:text="@{contacto.telefono}" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+
+</layout>
