@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">core</string>
+    <string name="error_permissions">Es necesario el permiso para acceder a los contactos.</string>
+</resources>
