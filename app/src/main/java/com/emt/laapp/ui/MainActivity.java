@@ -6,6 +6,7 @@ import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.os.Build;
@@ -95,7 +96,8 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner, C
     View.OnClickListener btnAddListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Timber.d("btnAddclicked");
+            Intent i = new Intent(MainActivity.this, ImportActivity.class);
+            MainActivity.this.startActivity(i);
         }
     };
 
