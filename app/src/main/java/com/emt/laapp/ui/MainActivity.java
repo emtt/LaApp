@@ -28,6 +28,7 @@ import com.emt.laapp.viewmodel.MainActivityViewModel;
 import com.emt.laapp.viewmodel.injection.MainActivityFactory;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.disposables.CompositeDisposable;
 import laapp.emt.com.core.model.Contacto;
@@ -78,15 +79,54 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner, C
 
         adapter = new ContactoAdapter(listContactos, this);
         mBinding.rvContactos.setAdapter(adapter);
+        mBinding.btnAdd.setOnClickListener(btnAddListener);
+
+        setVMVisible(true);
+
+        initData();
+    }
+
+    private void initData() {
+
+        mViewModel.getContactos().observe(this, contactListObserver);
 
     }
 
+    View.OnClickListener btnAddListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Timber.d("btnAddclicked");
+        }
+    };
+
+    Observer<List<Contacto>> contactListObserver = new Observer<List<Contacto>>() {
+
+        @Override
+        public void onChanged(@Nullable List<Contacto> contactos) {
+            Timber.d("OnChanged ContactList from DB");
+            if (contactos != null) {
+                setVMVisible(false);
+                Timber.d("Lista de Contactos from DB " + contactos.toString() + "Size " + contactos.size());
+                listContactos.clear();
+                listContactos.addAll(contactos);
+
+            } else {
+                Timber.d("NO REGRESÓ LISTA DE CONTACTOS");
+                setVMVisible(false);
+
+            }
+            adapter.notifyDataSetChanged();
+        }
+    };
+
+    /*
     private void test() {
 
         setVMVisible(true);
 
         searchNumber();
     }
+    */
 
 
     private void searchNumber() {

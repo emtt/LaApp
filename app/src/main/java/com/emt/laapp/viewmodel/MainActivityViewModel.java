@@ -1,21 +1,30 @@
 package com.emt.laapp.viewmodel;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
 import com.emt.laapp.App;
 
+import java.util.List;
+
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
+import laapp.emt.com.core.database.AppDatabase;
+import laapp.emt.com.core.database.ContactoDao;
 import laapp.emt.com.core.model.Contacto;
 import laapp.emt.com.core.rest.ProjectRepository;
 import timber.log.Timber;
 
 public class MainActivityViewModel extends ViewModel {
     private CompositeDisposable mDisposable;
+    private ContactoDao contactoDao;
+    private LiveData<List<Contacto>> mData;
 
     public MainActivityViewModel(CompositeDisposable disposable) {
         this.mDisposable = disposable;
+        contactoDao = AppDatabase.getAppDatabase(App.getAppContext()).contactoDao();
+        mData = contactoDao.getAll();
     }
 
 
@@ -56,4 +65,12 @@ public class MainActivityViewModel extends ViewModel {
 
         return responseContacto;
     }
+
+    /**
+     * @return LiveData list of contacts in database
+     */
+    public LiveData<List<Contacto>> getContactos() {
+        return mData;
+    }
+
 }
