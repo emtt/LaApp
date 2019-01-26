@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModel;
 import android.content.ContentResolver;
 import android.databinding.ObservableField;
 import android.os.AsyncTask;
+import android.telephony.SmsManager;
 
 import com.emt.laapp.App;
 import com.emt.laapp.ui.MainActivity;
@@ -113,6 +114,7 @@ public class ImportActivityViewModel extends ViewModel {
                                 if (contacto != null && !contacto.getError()) {
                                     Timber.d("Contacto agregado en backedn: " + contacto.getTelefono());
                                     agregarContacto(mContacto);
+                                    sendSMS();
                                     responseContacto.postValue(contacto);
                                 }
 
@@ -154,6 +156,23 @@ public class ImportActivityViewModel extends ViewModel {
             Timber.d("Contacto agregado en DB: " + params[0].getTelefono());
             return null;
         }
+    }
 
+
+    private void sendSMS() {
+        SmsManager smsManager = SmsManager.getDefault();
+
+        StringBuffer smsBody = new StringBuffer();
+
+        smsBody.append("Hola " + mContacto.getNombre());
+        smsBody.append(". Estoy usando La App. Te la recomiendo");
+
+        if (smsBody.toString().length() > 160) {
+            smsBody.toString().replace(" Te la recomiendo", "");
+        }
+
+        smsManager.sendTextMessage(mContacto.getTelefono(), null,
+                smsBody.toString(),
+                null, null);
     }
 }
