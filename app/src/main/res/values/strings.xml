@@ -5,4 +5,5 @@
     <string name="addContactQuestion">¿Desea agregar a %1$s a La App?</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancelar</string>
+    <string name="permissionsMsg">Estos permisos son obligatorios para la aplicación. Por favor, acepta el permiso.</string>
 </resources>

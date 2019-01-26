@@ -44,6 +44,46 @@ public class MainActivityViewModel extends ViewModel {
 
                             @Override
                             public void onNext(Contacto contacto) {
+                                Timber.d("Error" + contacto.getError() +" telefono " + contacto.getTelefono());
+                                if (contacto != null && !contacto.getError()) {
+                                    responseContacto.postValue(contacto);
+                                }else{
+                                    responseContacto.postValue(null);
+                                }
+
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Timber.e("Error %s", e.getMessage());
+                                responseContacto.postValue(null);
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                Timber.d("REQUEST NUMBER COMPLETE");
+                            }
+
+                        }));
+
+        return responseContacto;
+
+    }
+
+    /**
+     *
+     * @param userid
+     * @return
+     */
+    public MutableLiveData<Contacto> registerUser(String userid) {
+        final MutableLiveData<Contacto> responseContacto = new MutableLiveData<>();
+        mDisposable.add(
+                ProjectRepository.getInstance(App.getAppContext())
+                        .registerUser(userid)
+                        .subscribeWith(new DisposableObserver<Contacto>() {
+
+                            @Override
+                            public void onNext(Contacto contacto) {
                                 if (contacto != null && !contacto.getError()) {
                                     responseContacto.postValue(contacto);
                                 }
@@ -58,7 +98,7 @@ public class MainActivityViewModel extends ViewModel {
 
                             @Override
                             public void onComplete() {
-                                Timber.d("REQUEST NUMBER COMPLETE");
+                                Timber.d("REGISTER USER COMPLETE");
                             }
 
                         }));
