@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <variable
             name="contacto"
             type="laapp.emt.com.core.model.Contacto" />
@@ -31,10 +30,10 @@
                 android:layout_height="@dimen/circleSize"
                 android:background="@drawable/circle"
                 android:gravity="center_vertical|center_horizontal"
-                android:text="A"
                 android:textColor="@color/white"
                 android:textSize="@dimen/initialSize"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                app:capital_letter="@{contacto}"/>
 
             <TextView
                 android:id="@+id/txtNombre"

@@ -15,7 +15,7 @@ import laapp.emt.com.core.model.Contacto;
 public interface ContactoDao {
     String TABLE_NAME = "contacto";
 
-    @Query("SELECT * FROM " + TABLE_NAME)
+    @Query("SELECT * FROM " + TABLE_NAME + " ORDER BY nombre ASC")
     LiveData<List<Contacto>> getAll();
 
     @Query("SELECT * FROM " + TABLE_NAME)
