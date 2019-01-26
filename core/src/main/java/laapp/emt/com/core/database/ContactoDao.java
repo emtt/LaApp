@@ -21,10 +21,10 @@ public interface ContactoDao {
     @Query("SELECT * FROM " + TABLE_NAME)
     List<Contacto> getContactos();
 
-    @Query("SELECT * FROM " + TABLE_NAME + " where telefono = :email  LIMIT 1")
-    LiveData<Contacto> findByEmail(String email);
+    @Query("SELECT * FROM " + TABLE_NAME + " where telefono = :telefono LIMIT 1")
+    LiveData<Contacto> findByTelefono(String telefono);
 
-    @Query("SELECT * FROM " + TABLE_NAME + " where uid = :uid  LIMIT 1")
+    @Query("SELECT * FROM " + TABLE_NAME + " where uid = :uid LIMIT 1")
     LiveData<Contacto> findById(String uid);
 
     @Insert

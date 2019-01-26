@@ -72,6 +72,8 @@ dependencies {
     releaseImplementation 'com.readystatesoftware.chuck:library-no-op:1.1.0'
     //TIMBER FOR LOG CATS
     implementation 'com.jakewharton.timber:timber:4.7.1'
+    //EASY PREFS
+    implementation 'com.pixplicity.easyprefs:library:1.9.0'
 
     //CORE DE APLICACIÓN. LLAMADOS REMOTOS Y PROCESO DE LISTAS
     implementation project(':core')

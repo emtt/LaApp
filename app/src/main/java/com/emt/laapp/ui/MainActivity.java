@@ -1,38 +1,56 @@
 package com.emt.laapp.ui;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Toast;
 
+import com.emt.laapp.App;
 import com.emt.laapp.R;
 import com.emt.laapp.adapters.ContactoAdapter;
 import com.emt.laapp.adapters.ContactoItemListener;
 import com.emt.laapp.databinding.ActivityMainBinding;
 import com.emt.laapp.viewmodel.MainActivityViewModel;
 import com.emt.laapp.viewmodel.injection.MainActivityFactory;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 import io.reactivex.disposables.CompositeDisposable;
 import laapp.emt.com.core.model.Contacto;
 import timber.log.Timber;
+
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.READ_CONTACTS;
+import static android.Manifest.permission.READ_PHONE_NUMBERS;
+import static android.Manifest.permission.READ_PHONE_STATE;
+import static android.Manifest.permission.SEND_SMS;
 
 public class MainActivity extends AppCompatActivity implements LifecycleOwner, ContactoItemListener {
 
@@ -41,9 +59,13 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner, C
     private CompositeDisposable mDisposable = new CompositeDisposable();
     private ActivityMainBinding mBinding;
     private int MyVersion = Build.VERSION.SDK_INT;
-    private static final int CONTACTS_PERMISSIONS = 101;
+
     private ContactoAdapter adapter;
     private ArrayList<Contacto> listContactos = new ArrayList<>();
+    private ArrayList<String> permissionsToRequest;
+    private ArrayList<String> permissionsRejected = new ArrayList<>();
+    private ArrayList<String> permissions = new ArrayList<>();
+    private final static int ALL_PERMISSIONS_RESULT = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +81,14 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner, C
         mViewModel = ViewModelProviders.of(this, factory).get(MainActivityViewModel.class);
         mBinding.setViewModel(mViewModel);
 
+        permissions.add(READ_CONTACTS);
+        permissions.add(READ_PHONE_STATE);
+        permissions.add(SEND_SMS);
+        permissionsToRequest = findUnAskedPermissions(permissions);
 
         if (MyVersion > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            if (!checkIfAlreadyhavePermission()) {
-                requestForSpecificPermission();
+            if (permissionsToRequest.size() > 0) {
+                requestPermissions(permissionsToRequest.toArray(new String[permissionsToRequest.size()]), ALL_PERMISSIONS_RESULT);
             } else {
                 initControls();
             }
@@ -89,13 +115,14 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner, C
     private void initData() {
 
         mViewModel.getContactos().observe(this, contactListObserver);
-
+        registerNumber();
     }
 
     View.OnClickListener btnAddListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Timber.d("btnAddclicked");
+            Intent i = new Intent(MainActivity.this, ImportActivity.class);
+            MainActivity.this.startActivity(i);
         }
     };
 
@@ -115,7 +142,9 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner, C
                 setVMVisible(false);
 
             }
+
             adapter.notifyDataSetChanged();
+
         }
     };
 
@@ -128,32 +157,68 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner, C
     }
     */
 
+    public String createTransactionID() throws Exception {
+        return UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
+    }
 
-    private void searchNumber() {
+    private void registerNumber() {
+        try {
+            if (!Prefs.contains("UUID")) {
+                Prefs.putString("UUID", createTransactionID());
+            }
 
-        mViewModel.searchContacto("5585981240").observe(this, contactoObserver);
+            searchUser(Prefs.getString("UUID", ""));
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void searchUser(String userid) {
+
+        mViewModel.searchContacto(userid).observe(this, contactoObserver);
 
 
     }
+
+    private void registerUser() {
+
+        mViewModel.registerUser(Prefs.getString("UUID", "")).observe(this, registroObserver);
+
+    }
+
 
     Observer<Contacto> contactoObserver = new Observer<Contacto>() {
 
         @Override
         public void onChanged(@Nullable Contacto contacto) {
-
             if (contacto != null) {
-                Timber.d("Contacto onChanged Contacto " + contacto.getTelefono());
-                /*productos.addAll(responseProducto.getProductos());
-                adapter.notifyDataSetChanged();
-                */
+                Timber.d("Registrado");
+                Timber.d("Contacto UUID: " + contacto.getTelefono());
                 setVMVisible(false);
             } else {
-                Timber.d("Contacto Es Nullo");
+                Timber.d("No existe el registro. Procede a registrar");
+                registerUser();
                 setVMVisible(false);
             }
         }
 
     };
+
+    Observer<Contacto> registroObserver = new Observer<Contacto>() {
+
+        @Override
+        public void onChanged(@Nullable Contacto contacto) {
+            if (contacto != null) {
+                setVMVisible(false);
+            } else {
+                Timber.d("Contacto Es Nulo");
+                setVMVisible(false);
+            }
+        }
+
+    };
+
 
     private void setVMVisible(boolean mVisible) {
         mBinding.pgBar.setVisibility(mVisible ? View.VISIBLE : View.GONE);
@@ -183,33 +248,78 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner, C
         mDisposable.clear();
     }
 
-    private boolean checkIfAlreadyhavePermission() {
-        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS);
-        if (result == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        } else {
-            return false;
+    private ArrayList findUnAskedPermissions(ArrayList<String> wanted) {
+        ArrayList<String> result = new ArrayList();
+
+        for (String perm : wanted) {
+            if (!hasPermission(perm)) {
+                result.add(perm);
+            }
         }
+
+        return result;
     }
 
-    private void requestForSpecificPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS}, CONTACTS_PERMISSIONS);
+    private boolean hasPermission(String permission) {
+        if (canMakeSmores()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                return (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED);
+            }
+        }
+        return true;
     }
 
+    private boolean canMakeSmores() {
+        return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
         switch (requestCode) {
-            case CONTACTS_PERMISSIONS:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    initControls();
-                } else {
-                    Toast.makeText(this, getResources().getString(R.string.error_permissions), Toast.LENGTH_SHORT).show();
-                    this.finish();
+
+            case ALL_PERMISSIONS_RESULT:
+                for (String perms : permissionsToRequest) {
+                    if (!hasPermission(perms)) {
+                        permissionsRejected.add(perms);
+                    }
                 }
+
+                if (permissionsRejected.size() > 0) {
+
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (shouldShowRequestPermissionRationale(permissionsRejected.get(0))) {
+                            showMessageOKCancel(getResources().getString(R.string.permissionsMsg),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                requestPermissions(permissionsRejected.toArray(new String[permissionsRejected.size()]), ALL_PERMISSIONS_RESULT);
+                                            }
+                                        }
+                                    });
+                            return;
+                        }
+                    }
+
+                } else {
+                    initControls();
+                }
+
                 break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+
+    }
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(MainActivity.this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
     }
 
     @Override
