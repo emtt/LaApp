@@ -1,33 +1,25 @@
 package com.emt.laapp.ui;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.os.Build;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.telephony.TelephonyManager;
 import android.view.View;
-import android.widget.Toast;
 
-import com.emt.laapp.App;
 import com.emt.laapp.R;
 import com.emt.laapp.adapters.ContactoAdapter;
 import com.emt.laapp.adapters.ContactoItemListener;
@@ -38,17 +30,13 @@ import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 import io.reactivex.disposables.CompositeDisposable;
 import laapp.emt.com.core.model.Contacto;
 import timber.log.Timber;
 
-import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.READ_CONTACTS;
-import static android.Manifest.permission.READ_PHONE_NUMBERS;
 import static android.Manifest.permission.READ_PHONE_STATE;
 import static android.Manifest.permission.SEND_SMS;
 
@@ -148,14 +136,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner, C
         }
     };
 
-    /*
-    private void test() {
 
-        setVMVisible(true);
-
-        searchNumber();
-    }
-    */
 
     public String createTransactionID() throws Exception {
         return UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();

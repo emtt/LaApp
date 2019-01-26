@@ -22,7 +22,6 @@ import com.emt.laapp.adapters.ContactoItemListener;
 import com.emt.laapp.databinding.ActivityImportBinding;
 import com.emt.laapp.viewmodel.ImportActivityViewModel;
 import com.emt.laapp.viewmodel.injection.ImportActivityFactory;
-import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.List;
 
@@ -68,10 +67,6 @@ public class ImportActivity extends AppCompatActivity implements LifecycleOwner,
         mViewModel.getContactos().observe(this, new Observer<List<Contacto>>() {
             @Override
             public void onChanged(@Nullable List<Contacto> contactos) {
-                /*for (Contacto contacto : contactos) {
-                    Log.i("Import", " FROM AGENDA: Nombre:" + contacto.getNombre()
-                            + " Celular:  " + contacto.getTelefono());
-                }*/
                 mBinding.rvContactosAgenda.setAdapter(new ContactoImportAdapter(contactos,
                         ImportActivity.this));
                 mViewModel.busy.set(View.GONE);
@@ -109,7 +104,6 @@ public class ImportActivity extends AppCompatActivity implements LifecycleOwner,
 
     private void saveContacto(Contacto contacto) {
 
-        //if (contacto != null) mViewModel.agregarContacto(contacto);
         if (contacto != null) mViewModel.searchAgregado(contacto);
 
 
