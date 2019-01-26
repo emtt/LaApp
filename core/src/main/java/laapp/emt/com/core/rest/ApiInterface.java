@@ -26,7 +26,10 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(Constants.SEARCH_TELEFONO)
     Observable<Contacto> searchContacto(@Field("telefono") String telefono);
-    //Observable<Contacto> searchContacto(@Body Contacto contacto);
-    //Observable<Contacto> searchContacto(@Field("telefono") String telefono);
+
+
+    @FormUrlEncoded
+    @POST(Constants.REGISTER_USER)
+    Observable<Contacto> registerUser(@Field("telefono") String telefono);
 
 }

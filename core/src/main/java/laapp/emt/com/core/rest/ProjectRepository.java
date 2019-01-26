@@ -66,10 +66,17 @@ public class ProjectRepository {
      * @param telefono The telefono of the device.
      * @return Observable<Contacto>
      */
-    public Observable<Contacto> searchContacto(String  telefono) {
-        Log.d("Repo", "Contacto " + telefono);
+    public Observable<Contacto> searchContacto(String telefono) {
         return apiInterface.searchContacto(telefono)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
+
+    public Observable<Contacto> registerUser(String userid) {
+        return apiInterface.registerUser(userid)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+
 }
