@@ -157,7 +157,6 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner, C
     };
 
 
-
     public String createTransactionID() throws Exception {
         return UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
     }
@@ -325,6 +324,11 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner, C
 
     @Override
     public void Onclick(Contacto contacto) {
+
+        Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+        intent.putExtra("nombre", contacto.getNombre());
+        intent.putExtra("telefono", contacto.getTelefono());
+        this.startActivity(intent);
 
     }
 }
