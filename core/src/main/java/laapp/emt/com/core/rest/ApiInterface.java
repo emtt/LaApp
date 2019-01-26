@@ -32,4 +32,12 @@ public interface ApiInterface {
     @POST(Constants.REGISTER_USER)
     Observable<Contacto> registerUser(@Field("telefono") String telefono);
 
+    @FormUrlEncoded
+    @POST(Constants.SEARCH_AGREGADO)
+    Observable<Contacto> searchAgregado(@Field("id_telefono") String id_telefono,@Field("telefono") String telefono);
+
+
+    @FormUrlEncoded
+    @POST(Constants.REGISTER_AGREGADO)
+    Observable<Contacto> registerAgregado(@Field("id_telefono") String id_telefono, @Field("telefono") String telefono);
 }

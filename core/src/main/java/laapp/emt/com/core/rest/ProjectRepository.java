@@ -64,7 +64,7 @@ public class ProjectRepository {
      * response an Contacto object trough and RX Observable for the ViewModel.
      *
      * @param telefono The telefono of the device.
-     * @return Observable<Contacto>
+     * @return An RX Observable<Contacto>
      */
     public Observable<Contacto> searchContacto(String telefono) {
         return apiInterface.searchContacto(telefono)
@@ -72,11 +72,41 @@ public class ProjectRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    /**
+     * Register user device in backend
+     *
+     * @param userid
+     * @return @return An RX Observable<Contacto>
+     */
     public Observable<Contacto> registerUser(String userid) {
         return apiInterface.registerUser(userid)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    /**
+     * Search for registred contact in backend
+     *
+     * @param telefono
+     * @return @return An RX Observable<Contacto>
+     */
+    public Observable<Contacto> searchAgregado(String userid, String telefono) {
+        return apiInterface.searchAgregado(userid, telefono)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+
+    /**
+     * Register user's contact in backend
+     *
+     * @param telefono
+     * @return @return An RX Observable<Contacto>
+     */
+    public Observable<Contacto> registerAgregado(String userid, String telefono) {
+        return apiInterface.registerAgregado(userid, telefono)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
 
 }

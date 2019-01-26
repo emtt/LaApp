@@ -22,15 +22,18 @@ import com.emt.laapp.adapters.ContactoItemListener;
 import com.emt.laapp.databinding.ActivityImportBinding;
 import com.emt.laapp.viewmodel.ImportActivityViewModel;
 import com.emt.laapp.viewmodel.injection.ImportActivityFactory;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.List;
 
+import io.reactivex.disposables.CompositeDisposable;
 import laapp.emt.com.core.model.Contacto;
 
 public class ImportActivity extends AppCompatActivity implements LifecycleOwner, ContactoItemListener {
     private ImportActivityViewModel mViewModel;
     private LifecycleRegistry mLifecycleRegistry;
     private ActivityImportBinding mBinding;
+    private CompositeDisposable mDisposable = new CompositeDisposable();
     private Contacto mContacto;
 
     @Override
@@ -48,8 +51,9 @@ public class ImportActivity extends AppCompatActivity implements LifecycleOwner,
         mBinding =
                 DataBindingUtil.setContentView(this, R.layout.activity_import);
 
-        ImportActivityFactory factory = new ImportActivityFactory(this.getContentResolver());
+        ImportActivityFactory factory = new ImportActivityFactory(this.getContentResolver(), mDisposable);
         mViewModel = ViewModelProviders.of(this, factory).get(ImportActivityViewModel.class);
+        mBinding.setViewModel(mViewModel);
         mBinding.setViewModel(mViewModel);
 
 
@@ -105,7 +109,9 @@ public class ImportActivity extends AppCompatActivity implements LifecycleOwner,
 
     private void saveContacto(Contacto contacto) {
 
-        if (contacto != null) mViewModel.agregarContacto(contacto);
+        //if (contacto != null) mViewModel.agregarContacto(contacto);
+        if (contacto != null) mViewModel.searchAgregado(contacto);
+
 
     }
 
@@ -118,7 +124,9 @@ public class ImportActivity extends AppCompatActivity implements LifecycleOwner,
     protected void onDestroy() {
         super.onDestroy();
         mLifecycleRegistry.markState(Lifecycle.State.DESTROYED);
+        mDisposable.clear();
     }
+
 
     @NonNull
     @Override
